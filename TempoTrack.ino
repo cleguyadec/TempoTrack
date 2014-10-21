@@ -43,6 +43,9 @@ Les booleans pour la gestion des boutons
 boolean LOGTEMP = false;
 
 String dataLog;
+String rfidId;
+String rfiIdTemp;
+int boxCount = 0;
 
 void setup() {
    // Initialize the Bridge and the Serial 
@@ -64,10 +67,7 @@ void setup() {
 void loop() {
   delay(1000);
   timeCount++;
-  String rfidId;
-  String rfiIdTemp;
 
-  
   if(read_LCD_buttons() == btnLEFT){
     if(LOGTEMP == false){
       LOGTEMP = true;
@@ -86,30 +86,41 @@ void loop() {
       }
   }
   
-  
-  if (LOGTEMP == true){  
+ if (LOGTEMP == true){  
     
     rfidId = readRfidCard();
     
     if(timeCount > 30 || rfidId != ""){
       float currentTemp=readSensorTemperature();
       
-       // open the file. note that only one file can be open at a time,
+      // open the file. note that only one file can be open at a time,
       // so you have to close this one before opening another.
       // The FileSystem card is mounted at the following "/mnt/FileSystema1"
       File dataFile = FileSystem.open("/mnt/sda1/datalog.csv", FILE_APPEND);
       
       String dataLog = makeTimeStampString(String(currentTemp));
+      dataLog += ";";
+      dataLog += rfidId;
       
       writeToFile(dataFile, dataLog); 
       
-      if(isBlocked()) {
+      if (rfiIdTemp != rfidId){
+        boxCount++;
+        lcd.setCursor(1, 10);
+        lcd.print(boxCount);
+        }
+      
+        rfiIdTemp = rfidId;
+        
+              if(isBlocked()) {
         printLcd("Consigne enfreinte",0.0);
       }else{
         printLcd(getStateMessage(),currentTemp);
       }
-   } 
+    } 
   }
+  
+
 }
 
 void printLcd(String labelMessage,float temperature){
