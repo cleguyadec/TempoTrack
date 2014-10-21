@@ -52,7 +52,7 @@ void setup() {
   FileSystem.begin();
   Bridge.begin();
   Serial.begin(9600);
-  while(!Serial); //wait for the Serial port to connect.
+  //while(!Serial); //wait for the Serial port to connect.
   
   initTemperatureCaptor(21,26);
   Serial.println("Hello!");
@@ -67,22 +67,25 @@ void setup() {
 void loop() {
   delay(1000);
   timeCount++;
-
-  if(read_LCD_buttons() == btnLEFT){
+  
+  if(read_LCD_buttons() == btnSELECT){
+    Serial.println("Button");
     if(LOGTEMP == false){
       LOGTEMP = true;
       // open the file. note that only one file can be open at a time,
       // so you have to close this one before opening another.
       // The FileSystem card is mounted at the following "/mnt/FileSystema1"
       File dataFile = FileSystem.open("/mnt/sda1/datalog.csv", FILE_APPEND);
-      writeToFile(dataFile, makeTimeStampString(";; start reading temp")); 
+      writeToFile(dataFile, makeTimeStampString(";start reading temp"));
+      printLcd("Start logging",0.0);
       }else{
         LOGTEMP = false;
         // open the file. note that only one file can be open at a time,
         // so you have to close this one before opening another.
         // The FileSystem card is mounted at the following "/mnt/FileSystema1"
         File dataFile = FileSystem.open("/mnt/sda1/datalog.csv", FILE_APPEND);
-        writeToFile(dataFile, makeTimeStampString(";; reading temp off")); 
+        writeToFile(dataFile, makeTimeStampString(";reading temp off"));
+        printLcd("Stop logging",0.0);
       }
   }
   
@@ -90,7 +93,7 @@ void loop() {
     
     rfidId = readRfidCard();
     
-    if(timeCount > 30 || rfidId != ""){
+    if(timeCount > 1 || rfidId != ""){
       float currentTemp=readSensorTemperature();
       
       // open the file. note that only one file can be open at a time,
@@ -102,25 +105,31 @@ void loop() {
       dataLog += ";";
       dataLog += rfidId;
       
+      //Serial.println(dataLog);
       writeToFile(dataFile, dataLog); 
       
-      if (rfiIdTemp != rfidId){
-        boxCount++;
-        lcd.setCursor(1, 10);
-        lcd.print(boxCount);
-        }
+      //Serial.print(rfiIdTemp);
+      //Serial.println(boxCount);
       
+      if (rfiIdTemp != rfidId){
+        //Serial.println(rfiIdTemp);
+        boxCount++;
         rfiIdTemp = rfidId;
+        }
+         
         
-              if(isBlocked()) {
-        printLcd("Consigne enfreinte",0.0);
-      }else{
-        printLcd(getStateMessage(),currentTemp);
-      }
+      if(isBlocked()) {
+        printLcd("GAME OVER",0.0);
+        }else{
+          printLcd(getStateMessage(),currentTemp);
+          lcd.setCursor(6, 2);
+          lcd.print(rfidId);
+          lcd.setCursor(11, 0);
+          lcd.print(boxCount);
+        }
+        timeCount = 0;
     } 
   }
-  
-
 }
 
 void printLcd(String labelMessage,float temperature){

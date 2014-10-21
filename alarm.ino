@@ -11,7 +11,7 @@ int STATE = 0;
 /** 
   le temps max qu'on peut rester hors norme
 **/
-int maxDeviationAllowed=10;
+int maxDeviationAllowed=5;
 
 /**
   si le seuil a été dépassé trop longtemps
@@ -50,11 +50,11 @@ void updateState(float currentTemp){
 }
 String getStateMessage(){
     if(STATE==0) {
-       return "accepted value";
+       return "accepted";
     } else if(STATE<0){
-       return "Erreur Cons inf";
+       return "Erreur inf";
     } else if(STATE>0){
-       return "Erreur Cons sup";
+       return "Erreur sup";
     } else {
        return "WTF value";
     }
