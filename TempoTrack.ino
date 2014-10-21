@@ -22,6 +22,28 @@ DHT dht(DHTPIN, DHTTYPE);
 
 LiquidCrystal lcd(8, 9, 4, 5, 6, 7);        // select the pins used on the LCD panel
 
+/**
+modulo pour découpler la lecture RFID de la lecture de temperature.
+**/
+int timeCount = 0;
+
+/**
+alias des boutons du LCD
+**/
+#define btnRIGHT  0
+#define btnUP     1
+#define btnDOWN   2
+#define btnLEFT   3
+#define btnSELECT 4
+#define btnNONE   5
+
+/**
+Les booleans pour la gestion des boutons
+**/
+boolean LOGTEMP = false;
+
+String dataLog;
+
 void setup() {
    // Initialize the Bridge and the Serial 
   FileSystem.begin();
@@ -41,25 +63,53 @@ void setup() {
 
 void loop() {
   delay(1000);
+  timeCount++;
+  String rfidId;
+  String rfiIdTemp;
+
   
-  float currentTemp=readSensorTemperature();
-  
-    // open the file. note that only one file can be open at a time,
-  // so you have to close this one before opening another.
-  // The FileSystem card is mounted at the following "/mnt/FileSystema1"
-  File dataFile = FileSystem.open("/mnt/sda1/datalog.csv", FILE_APPEND);
-  
-  String dataLog = makeTimeStampString(String(currentTemp));
-  writeToFile(dataFile, dataLog); 
-  
-  if(isBlocked()) {
-    printLcd("Consigne enfreinte",0.0);
-  }else{
-    printLcd(getStateMessage(),currentTemp);
+  if(read_LCD_buttons() == btnLEFT){
+    if(LOGTEMP == false){
+      LOGTEMP = true;
+      // open the file. note that only one file can be open at a time,
+      // so you have to close this one before opening another.
+      // The FileSystem card is mounted at the following "/mnt/FileSystema1"
+      File dataFile = FileSystem.open("/mnt/sda1/datalog.csv", FILE_APPEND);
+      writeToFile(dataFile, makeTimeStampString(";; start reading temp")); 
+      }else{
+        LOGTEMP = false;
+        // open the file. note that only one file can be open at a time,
+        // so you have to close this one before opening another.
+        // The FileSystem card is mounted at the following "/mnt/FileSystema1"
+        File dataFile = FileSystem.open("/mnt/sda1/datalog.csv", FILE_APPEND);
+        writeToFile(dataFile, makeTimeStampString(";; reading temp off")); 
+      }
   }
   
-  readRfidCard();
   
+  if (LOGTEMP == true){  
+    
+    rfidId = readRfidCard();
+    
+    if(timeCount > 30 || rfidId != ""){
+      float currentTemp=readSensorTemperature();
+      
+       // open the file. note that only one file can be open at a time,
+      // so you have to close this one before opening another.
+      // The FileSystem card is mounted at the following "/mnt/FileSystema1"
+      File dataFile = FileSystem.open("/mnt/sda1/datalog.csv", FILE_APPEND);
+      
+      String dataLog = makeTimeStampString(String(currentTemp));
+      
+      writeToFile(dataFile, dataLog); 
+      
+      if(isBlocked()) {
+        printLcd("Consigne enfreinte",0.0);
+      }else{
+        printLcd(getStateMessage(),currentTemp);
+      }
+   } 
+  }
 }
 
 void printLcd(String labelMessage,float temperature){
