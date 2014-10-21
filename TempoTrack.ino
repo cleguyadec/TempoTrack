@@ -53,12 +53,13 @@ void setup() {
   Bridge.begin();
   Serial.begin(9600);
   //while(!Serial); //wait for the Serial port to connect.
-  
+    
   initTemperatureCaptor(21,26);
   Serial.println("Hello!");
   
   // set up the LCD's number of columns and rows:
   lcd.begin(16, 2);
+  printLcd("Ready",0.0);
   
   //initialize RFID
   initRfidReading();
@@ -69,14 +70,14 @@ void loop() {
   timeCount++;
   
   if(read_LCD_buttons() == btnSELECT){
-    Serial.println("Button");
+
     if(LOGTEMP == false){
       LOGTEMP = true;
       // open the file. note that only one file can be open at a time,
       // so you have to close this one before opening another.
       // The FileSystem card is mounted at the following "/mnt/FileSystema1"
       File dataFile = FileSystem.open("/mnt/sda1/datalog.csv", FILE_APPEND);
-      writeToFile(dataFile, makeTimeStampString(";start reading temp"));
+      writeToFile(dataFile, makeTimeStampString("0.0;start reading temp"));
       printLcd("Start logging",0.0);
       }else{
         LOGTEMP = false;
@@ -84,7 +85,7 @@ void loop() {
         // so you have to close this one before opening another.
         // The FileSystem card is mounted at the following "/mnt/FileSystema1"
         File dataFile = FileSystem.open("/mnt/sda1/datalog.csv", FILE_APPEND);
-        writeToFile(dataFile, makeTimeStampString(";reading temp off"));
+        writeToFile(dataFile, makeTimeStampString("0.0;reading temp off"));
         printLcd("Stop logging",0.0);
       }
   }
@@ -93,7 +94,7 @@ void loop() {
     
     rfidId = readRfidCard();
     
-    if(timeCount > 1 || rfidId != ""){
+    if(timeCount > 10 || rfidId != ""){
       float currentTemp=readSensorTemperature();
       
       // open the file. note that only one file can be open at a time,
