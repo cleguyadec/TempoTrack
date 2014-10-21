@@ -35,12 +35,12 @@ String getTimeStamp() {
   Process time;
   // date is a command line utility to get the date and the time 
   // in different formats depending on the additional parameter 
-    time.runShellCommand("echo `date +%F`T`date +%T`Z");
+  time.begin("date");
+  time.addParameter("+%D;%T");  // parameters: D for the complete date mm/dd/yy
+                                //             T for the time hh:mm:ss    
+  time.run();  // run the command
 
-  // do nothing until the process finishes, so you get the whole output:
-  while (time.running());
-
-  // Read command output. 
+  // read the output of the command
   while(time.available()>0) {
     char c = time.read();
     if(c != '\n')
