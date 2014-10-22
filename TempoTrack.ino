@@ -126,11 +126,10 @@ void startLogging(){
 }
 
 void stopLogging(){
-      LOG_TEMPERATURE_ENABLE = false;
-      writeToFile(makeTimeStampString("0.0;reading temp off"));
-      printLcd("Stop logging",0.0);
+    LOG_TEMPERATURE_ENABLE = false;
+    writeToFile(makeTimeStampString("0.0;reading temp off"));
+    printLcd("Stop logging",0.0);
 }
-
 
 boolean isButtonSelectPressed(){
   return read_LCD_buttons() == btnSELECT;

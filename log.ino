@@ -1,10 +1,11 @@
 #include <FileIO.h> 
 
-File outfile;
+char* reportFilePath;
 
 void initReportFile(char* filePath){
-        outfile = FileSystem.open(filePath, FILE_APPEND);
+    reportFilePath=filePath;
 }
+
 
 String makeTimeStampString (String dataToWrite){
     
@@ -18,12 +19,13 @@ String makeTimeStampString (String dataToWrite){
   }else{return "error";}
 }
 
-void writeToFile(File dataFile, String dataString){
-    
+void writeToFile(String dataString){
+  File outfile = FileSystem.open(reportFilePath, FILE_APPEND);
+  
   // if the file is available, write to it:
-  if (dataFile) {
-    dataFile.println(dataString);
-    dataFile.close();
+  if (outfile) {
+    outfile.println(dataString);
+    outfile.close();
     // print to the serial port too:
     Serial.println(dataString);       
   }  
@@ -34,11 +36,11 @@ void writeToFile(File dataFile, String dataString){
 }
 
 void logTemperature(float temperature){
-  writeTofile(makeTimeStampString(String(currentTemp)));
+  writeToFile(makeTimeStampString(String(temperature)));
 }
 
 void logTemperature(float temperature,String user){
-  writeTofile(makeTimeStampString(String(currentTemp))+";"+user);
+  writeToFile(makeTimeStampString(String(temperature))+";"+user);
 }
 
 // This function return a string with the time stamp
