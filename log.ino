@@ -1,3 +1,4 @@
+#include <FileIO.h> 
 
 File outfile;
 
@@ -17,12 +18,12 @@ String makeTimeStampString (String dataToWrite){
   }else{return "error";}
 }
 
-void writeToFile(String dataString){
+void writeToFile(File dataFile, String dataString){
     
   // if the file is available, write to it:
-  if (outfile) {
-    outfile.println(dataString);
-    outfile.close();
+  if (dataFile) {
+    dataFile.println(dataString);
+    dataFile.close();
     // print to the serial port too:
     Serial.println(dataString);       
   }  

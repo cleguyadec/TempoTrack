@@ -63,10 +63,7 @@ void setup() {
   
   //initialize RFID
   initRfidReading();
-  initReportFile("/mnt/sda1/datalog.csv");
-
 }
-
 
 void loop() {
   delay(1000);
@@ -133,6 +130,7 @@ void stopLogging(){
       writeToFile(makeTimeStampString("0.0;reading temp off"));
       printLcd("Stop logging",0.0);
 }
+
 
 boolean isButtonSelectPressed(){
   return read_LCD_buttons() == btnSELECT;
