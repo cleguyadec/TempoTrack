@@ -69,6 +69,24 @@ void loop() {
   delay(1000);
   timeCount++;
   
+   if(read_LCD_buttons() == btnRIGHT){
+    Process CpDatalogScript;
+    
+    CpDatalogScript.begin("/mnt/sda1/CpDatalog.sh");
+    CpDatalogScript.run();
+    
+    String output = "";
+    
+    // read the output of the script
+    while (CpDatalogScript.available()) {
+      output += (char)CpDatalogScript.read();
+    }
+    // remove the blank spaces at the beginning and the ending of the string
+    output.trim();
+    lcd.setCursor(0, 0);
+    lcd.print(output);
+  }
+  
   if(read_LCD_buttons() == btnSELECT){
 
     if(LOGTEMP == false){
@@ -93,26 +111,7 @@ void loop() {
  if (LOGTEMP == true){  
     
     rfidId = readRfidCard();
-    
-    
-   if(read_LCD_buttons() == btnRIGHT){
-    Process CpDatalogScript;
-    
-    CpDatalogScript.begin("/mnt/sda1/CpDatalog.sh");
-    CpDatalogScript.run();
-    
-    String output = "";
-    
-    // read the output of the script
-    while (CpDatalogScript.available()) {
-      output += (char)CpDatalogScript.read();
-    }
-    // remove the blank spaces at the beginning and the ending of the string
-    output.trim();
-    lcd.setCursor(0, 0);
-    lcd.print(output);
-  }
-    
+ 
     
     if(timeCount > 10 || rfidId != ""){
       float currentTemp=readSensorTemperature();
