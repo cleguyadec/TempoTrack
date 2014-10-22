@@ -1,11 +1,10 @@
 
-#include <FileIO.h> 
-
 File outfile;
 
-void initReportFile(String filePath){
+void initReportFile(char* filePath){
         outfile = FileSystem.open(filePath, FILE_APPEND);
 }
+
 String makeTimeStampString (String dataToWrite){
     
   if (dataToWrite){
@@ -31,6 +30,14 @@ void writeToFile(String dataString){
   else {
     Serial.println("error opening");
   }
+}
+
+void logTemperature(float temperature){
+  writeTofile(makeTimeStampString(String(currentTemp)));
+}
+
+void logTemperature(float temperature,String user){
+  writeTofile(makeTimeStampString(String(currentTemp))+";"+user);
 }
 
 // This function return a string with the time stamp

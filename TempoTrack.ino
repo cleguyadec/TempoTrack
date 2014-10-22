@@ -10,11 +10,11 @@
 
 //Include
 #include <Wire.h> //I2C for RFID
-#include <Console.h> 
-#include <FileIO.h>
 #include <Adafruit_NFCShield_I2C.h> //RFID shield
 #include <LiquidCrystal.h>  //LCD
 #include <DHT.h> //temp sensor
+#include <Console.h> 
+#include <FileIO.h>
 
 #define DHTPIN A1     // what pin we're connected to
 #define DHTTYPE DHT11   // DHT 11 sensor
@@ -40,7 +40,7 @@ alias des boutons du LCD
 /**
 Les booleans pour la gestion des boutons
 **/
-boolean LOGTEMP = false;
+boolean LOG_TEMPERATURE_ENABLE = false;
 
 String dataLog;
 String rfidId;
@@ -73,27 +73,22 @@ void loop() {
   timeCount++;
   
   if(isButtonSelectPressed()){
-
-    if(LOG_TEMPERATURE_ENABLE == false){
-      startLogging();
+    if(LOG_TEMPERATURE_ENABLE){
+      stopLogging();
     }else{
-      stopLogging();  
-    }      
+      startLogging();  
+    }
   }
   
- if (LOGTEMP == true){  
+ if (LOG_TEMPERATURE_ENABLE){  
     
     rfidId = readRfidCard();
     
     if(timeCount > 10 || rfidId != ""){
       float currentTemp=readSensorTemperature();
       
-      String dataLog = makeTimeStampString(String(currentTemp));
-      dataLog += ";";
-      dataLog += rfidId;
-      
       //Serial.println(dataLog);
-      writeToFile(dataLog); 
+      logTemperature(currentTemp,rfidId); 
       
       //Serial.print(rfiIdTemp);
       //Serial.println(boxCount);
@@ -139,8 +134,8 @@ void stopLogging(){
       printLcd("Stop logging",0.0);
 }
 
-public boolean isButtonSelectPressed(){
-  return read_LCD_buttons() == btnSELECT
+boolean isButtonSelectPressed(){
+  return read_LCD_buttons() == btnSELECT;
 }
 
 
