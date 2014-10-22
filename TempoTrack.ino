@@ -63,31 +63,22 @@ void setup() {
   
   //initialize RFID
   initRfidReading();
+  initReportFile("/mnt/sda1/datalog.csv");
+
 }
+
 
 void loop() {
   delay(1000);
   timeCount++;
   
-  if(read_LCD_buttons() == btnSELECT){
+  if(isButtonSelectPressed()){
 
-    if(LOGTEMP == false){
-      LOGTEMP = true;
-      // open the file. note that only one file can be open at a time,
-      // so you have to close this one before opening another.
-      // The FileSystem card is mounted at the following "/mnt/FileSystema1"
-      File dataFile = FileSystem.open("/mnt/sda1/datalog.csv", FILE_APPEND);
-      writeToFile(dataFile, makeTimeStampString("0.0;start reading temp"));
-      printLcd("Start logging",0.0);
-      }else{
-        LOGTEMP = false;
-        // open the file. note that only one file can be open at a time,
-        // so you have to close this one before opening another.
-        // The FileSystem card is mounted at the following "/mnt/FileSystema1"
-        File dataFile = FileSystem.open("/mnt/sda1/datalog.csv", FILE_APPEND);
-        writeToFile(dataFile, makeTimeStampString("0.0;reading temp off"));
-        printLcd("Stop logging",0.0);
-      }
+    if(LOG_TEMPERATURE_ENABLE == false){
+      startLogging();
+    }else{
+      stopLogging();  
+    }      
   }
   
  if (LOGTEMP == true){  
@@ -97,17 +88,12 @@ void loop() {
     if(timeCount > 10 || rfidId != ""){
       float currentTemp=readSensorTemperature();
       
-      // open the file. note that only one file can be open at a time,
-      // so you have to close this one before opening another.
-      // The FileSystem card is mounted at the following "/mnt/FileSystema1"
-      File dataFile = FileSystem.open("/mnt/sda1/datalog.csv", FILE_APPEND);
-      
       String dataLog = makeTimeStampString(String(currentTemp));
       dataLog += ";";
       dataLog += rfidId;
       
       //Serial.println(dataLog);
-      writeToFile(dataFile, dataLog); 
+      writeToFile(dataLog); 
       
       //Serial.print(rfiIdTemp);
       //Serial.println(boxCount);
@@ -141,7 +127,20 @@ void printLcd(String labelMessage,float temperature){
         lcd.print(temperature);
 }
 
+void startLogging(){
+      LOG_TEMPERATURE_ENABLE = true;
+      writeToFile(makeTimeStampString("0.0;start reading temp"));
+      printLcd("Start logging",0.0);
+}
 
+void stopLogging(){
+      LOG_TEMPERATURE_ENABLE = false;
+      writeToFile(makeTimeStampString("0.0;reading temp off"));
+      printLcd("Stop logging",0.0);
+}
 
+public boolean isButtonSelectPressed(){
+  return read_LCD_buttons() == btnSELECT
+}
 
 
