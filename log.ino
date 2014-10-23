@@ -1,75 +1,55 @@
-#include <FileIO.h> 
-
-<<<<<<< HEAD
-=======
+#include <FileIO.h>
 char* reportFilePath;
-
-void initReportFile(char* filePath){
-    reportFilePath=filePath;
+void initReportFile(char* filePath) {
+  reportFilePath = filePath;
 }
-
-
->>>>>>> 88cd065446207020f9ec5dbf2be4fcc28a0d49ba
-String makeTimeStampString (String dataToWrite){
-    
-  if (dataToWrite){
+String makeTimeStampString (String dataToWrite) {
+  if (dataToWrite) {
     // make a string that start with a timestamp for assembling the data to log:
     String dataString;
     dataString += getTimeStamp();
     dataString += ";";
     dataString += String(dataToWrite);
     return dataString;
-  }else{return "error";}
+  } else {
+    return "error";
+  }
 }
-
-<<<<<<< HEAD
-void writeToFile(File dataFile, String dataString){
-    
-=======
-void writeToFile(String dataString){
+void writeToFile(String dataString) {
   File outfile = FileSystem.open(reportFilePath, FILE_APPEND);
-  
->>>>>>> 88cd065446207020f9ec5dbf2be4fcc28a0d49ba
   // if the file is available, write to it:
-  if (dataFile) {
-    dataFile.println(dataString);
-    dataFile.close();
+  if (outfile) {
+    outfile.println(dataString);
+    outfile.close();
     // print to the serial port too:
-    Serial.println(dataString);       
-  }  
+    Serial.println(dataString);
+  }
   // if the file isn't open, pop up an error:
   else {
     Serial.println("error opening");
   }
 }
-
-void logTemperature(float temperature){
+void logTemperature(float temperature) {
   writeToFile(makeTimeStampString(String(temperature)));
 }
-
-void logTemperature(float temperature,String user){
-  writeToFile(makeTimeStampString(String(temperature))+";"+user);
+void logTemperature(float temperature, String user) {
+  writeToFile(makeTimeStampString(String(temperature)) + ";" + user);
 }
-
 // This function return a string with the time stamp
 // MS14 will call the Linux "data" command and get the time stamp
 String getTimeStamp() {
   String result;
   Process time;
-  // date is a command line utility to get the date and the time 
-  // in different formats depending on the additional parameter 
-    time.runShellCommand("echo `date +%F`T`date +%T`Z");
-
+  // date is a command line utility to get the date and the time
+  // in different formats depending on the additional parameter
+  time.runShellCommand("echo `date +%F`T`date +%T`Z");
   // do nothing until the process finishes, so you get the whole output:
   while (time.running());
-
-  // Read command output. 
-  while(time.available()>0) {
+  // Read command output.
+  while (time.available() > 0) {
     char c = time.read();
-    if(c != '\n')
+    if (c != '\n')
       result += c;
   }
-  
   return result;
 }
-
