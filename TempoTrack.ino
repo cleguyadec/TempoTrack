@@ -10,11 +10,11 @@
 
 //Include
 #include <Wire.h> //I2C for RFID
-#include <Console.h> 
-#include <FileIO.h>
 #include <Adafruit_NFCShield_I2C.h> //RFID shield
 #include <LiquidCrystal.h>  //LCD
 #include <DHT.h> //temp sensor
+#include <Console.h> 
+#include <FileIO.h>
 
 #define DHTPIN A1     // what pin we're connected to
 #define DHTTYPE DHT11   // DHT 11 sensor
@@ -40,7 +40,7 @@ alias des boutons du LCD
 /**
 Les booleans pour la gestion des boutons
 **/
-boolean LOGTEMP = false;
+boolean LOG_TEMPERATURE_ENABLE = false;
 
 String dataLog;
 String rfidId;
@@ -69,6 +69,7 @@ void loop() {
   delay(1000);
   timeCount++;
   
+<<<<<<< HEAD
    if(read_LCD_buttons() == btnRIGHT){
     Process CpDatalogScript;
     
@@ -106,9 +107,17 @@ void loop() {
         writeToFile(dataFile, makeTimeStampString("0.0;reading temp off"));
         printLcd("Stop logging",0.0);
       }
+=======
+  if(isButtonSelectPressed()){
+    if(LOG_TEMPERATURE_ENABLE){
+      stopLogging();
+    }else{
+      startLogging();  
+    }
+>>>>>>> 88cd065446207020f9ec5dbf2be4fcc28a0d49ba
   }
   
- if (LOGTEMP == true){  
+ if (LOG_TEMPERATURE_ENABLE){  
     
     rfidId = readRfidCard();
  
@@ -116,6 +125,7 @@ void loop() {
     if(timeCount > 10 || rfidId != ""){
       float currentTemp=readSensorTemperature();
       
+<<<<<<< HEAD
       // open the file. note that only one file can be open at a time,
       // so you have to close this one before opening another.
       // The FileSystem card is mounted at the following "/mnt/FileSystema1"
@@ -127,6 +137,10 @@ void loop() {
       
       //Serial.println(dataLog);
       writeToFile(dataFile, dataLog); 
+=======
+      //Serial.println(dataLog);
+      logTemperature(currentTemp,rfidId); 
+>>>>>>> 88cd065446207020f9ec5dbf2be4fcc28a0d49ba
       
       //Serial.print(rfiIdTemp);
       //Serial.println(boxCount);
@@ -161,6 +175,18 @@ void printLcd(String labelMessage,float temperature){
 }
 
 
+<<<<<<< HEAD
 
+=======
+void stopLogging(){
+    LOG_TEMPERATURE_ENABLE = false;
+    writeToFile(makeTimeStampString("0.0;reading temp off"));
+    printLcd("Stop logging",0.0);
+}
+
+boolean isButtonSelectPressed(){
+  return read_LCD_buttons() == btnSELECT;
+}
+>>>>>>> 88cd065446207020f9ec5dbf2be4fcc28a0d49ba
 
 
