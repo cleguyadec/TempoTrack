@@ -35,8 +35,10 @@ Les booleans pour la gestion des boutons
 boolean LOG_TEMPERATURE_ENABLE = false;
 String dataLog;
 String rfidId;
-String rfiIdTemp;
+String rfidIdTemp;
 int boxCount = 0;
+Process CpDatalogScript;
+
 void setup() {
   // Initialize the Bridge and the Serial
   FileSystem.begin();
@@ -51,9 +53,15 @@ void setup() {
   //initialize RFID
   initRfidReading();
 }
+
 void loop() {
   delay(1000);
   timeCount++;
+
+  if (isButtonRightPressed()) {
+    processScript(CpDatalogScript, "/mnt/sda1/CpDatalog.sh");
+  }
+
   if (isButtonSelectPressed()) {
     if (LOG_TEMPERATURE_ENABLE) {
       stopLogging();
@@ -67,19 +75,19 @@ void loop() {
       float currentTemp = readSensorTemperature();
       //Serial.println(dataLog);
       logTemperature(currentTemp, rfidId);
-      //Serial.print(rfiIdTemp);
+      //Serial.print(rfidIdTemp);
       //Serial.println(boxCount);
-      if (rfiIdTemp != rfidId) {
-        //Serial.println(rfiIdTemp);
+      if (rfidIdTemp != rfidId && rfidId != "") {
+        //Serial.println(rfidIdTemp);
         boxCount++;
-        rfiIdTemp = rfidId;
+        rfidIdTemp = rfidId;
       }
       if (isBlocked()) {
         printLcd("GAME OVER", 0.0);
       } else {
         printLcd(getStateMessage(), currentTemp);
         lcd.setCursor(6, 2);
-        lcd.print(rfidId);
+        lcd.print(rfidIdTemp);
         lcd.setCursor(11, 0);
         lcd.print(boxCount);
       }
@@ -87,6 +95,7 @@ void loop() {
     }
   }
 }
+
 void printLcd(String labelMessage, float temperature) {
   lcd.clear();
   lcd.setCursor(0, 0);
@@ -94,17 +103,38 @@ void printLcd(String labelMessage, float temperature) {
   lcd.setCursor(0, 2);
   lcd.print(temperature);
 }
+
 void startLogging() {
   LOG_TEMPERATURE_ENABLE = true;
   writeToFile(makeTimeStampString("0.0;start reading temp"));
   printLcd("Start logging", 0.0);
 }
+
 void stopLogging() {
   LOG_TEMPERATURE_ENABLE = false;
   writeToFile(makeTimeStampString("0.0;reading temp off"));
   printLcd("Stop logging", 0.0);
 }
+
 boolean isButtonSelectPressed() {
   return read_LCD_buttons() == btnSELECT;
+}
+
+boolean isButtonRightPressed() {
+  return read_LCD_buttons() == btnRIGHT;
+}
+
+void processScript(Process scriptToProcess, String pathToTheScript) {
+  scriptToProcess.begin(pathToTheScript);
+  scriptToProcess.run();
+  String output = "";
+  // read the output of the script
+  while (scriptToProcess.available()) {
+    output += (char)scriptToProcess.read();
+  }
+  // remove the blank spaces at the beginning and the ending of the string
+  output.trim();
+  lcd.setCursor(0, 0);
+  lcd.print(output);
 }
 

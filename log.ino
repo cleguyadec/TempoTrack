@@ -1,8 +1,11 @@
 #include <FileIO.h>
+
 char* reportFilePath;
+
 void initReportFile(char* filePath) {
   reportFilePath = filePath;
 }
+
 String makeTimeStampString (String dataToWrite) {
   if (dataToWrite) {
     // make a string that start with a timestamp for assembling the data to log:
@@ -15,6 +18,7 @@ String makeTimeStampString (String dataToWrite) {
     return "error";
   }
 }
+
 void writeToFile(String dataString) {
   File outfile = FileSystem.open(reportFilePath, FILE_APPEND);
   // if the file is available, write to it:
@@ -29,14 +33,17 @@ void writeToFile(String dataString) {
     Serial.println("error opening");
   }
 }
+
 void logTemperature(float temperature) {
   writeToFile(makeTimeStampString(String(temperature)));
 }
+
 void logTemperature(float temperature, String user) {
   writeToFile(makeTimeStampString(String(temperature)) + ";" + user);
 }
 // This function return a string with the time stamp
 // MS14 will call the Linux "data" command and get the time stamp
+
 String getTimeStamp() {
   String result;
   Process time;
