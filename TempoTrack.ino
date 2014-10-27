@@ -52,6 +52,7 @@ void setup() {
   printLcd("Ready", 0.0);
   //initialize RFID
   initRfidReading();
+  initReportFile("/mnt/sda1/datalog.csv");
 }
 
 void loop() {

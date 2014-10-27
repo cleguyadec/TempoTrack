@@ -31,6 +31,9 @@ void writeToFile(String dataString) {
   // if the file isn't open, pop up an error:
   else {
     Serial.println("error opening");
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print("error openning");
   }
 }
 
