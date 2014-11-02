@@ -12,6 +12,8 @@
 #include <DHT.h> //temp sensor
 #include <Console.h>
 #include <FileIO.h>
+#include <YunServer.h>
+#include <YunClient.h>
 #define DHTPIN A1 // what pin we're connected to
 #define DHTTYPE DHT11 // DHT 11 sensor
 DHT dht(DHTPIN, DHTTYPE);
@@ -43,6 +45,7 @@ void setup() {
   // Initialize the Bridge and the Serial
   FileSystem.begin();
   Bridge.begin();
+  initYunServer();
   Serial.begin(9600);
   //while(!Serial); //wait for the Serial port to connect.
   initTemperatureCaptor(21, 26);
@@ -56,11 +59,13 @@ void setup() {
 }
 
 void loop() {
+  
+  printDuinoTime();
   delay(1000);
   timeCount++;
 
   if (isButtonRightPressed()) {
-    processScript(CpDatalogScript, "/mnt/sda1/CpDatalog.sh");
+    processScript(CpDatalogScript, "/mnt/sda1/TempoTrack/CpDatalog.sh");
   }
 
   if (isButtonSelectPressed()) {
