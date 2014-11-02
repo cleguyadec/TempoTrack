@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<head>
+<title>YUN Sync Time</title>
+</head>
+<html>
+<font face="arial" size="3" color="#424242">
+<h2> Arduino YUN Synchronization Time </h2>
+<script src="jquery-1.11.1.js"></script>
+<!-- TIME SYNC CLOCK BUTTON -->
+<p>
+<input type="button" onclick="clockMsg()" value="SYNC TIME"/>
+</p>
+<script type="text/javascript"> 
+function clockMsg() {
+ var d = new Date();
+ var n = d.getTime() / 1000;
+ $.get('/arduino/msg/clock/' + n + '/');
+ return false;
+}
+</script>
+<!-- GET ARDUINO YUN TIME -->
+<script type="text/javascript">
+function refresh() {
+ $('#content').load('/arduino/data/');
+}
+</script>
+<body onload="setInterval(function() {refresh()}, 1000);">
+ <span id="content">Waiting...</span>
+</body> 
+</html>
+</font>
