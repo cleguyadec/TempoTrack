@@ -7,11 +7,10 @@
  * date: 2 July 2014
  ***********************************************************/
 // Libraries
-#include <Bridge.h>
-
 
 // Init YUN Server
 YunServer server; // init YunServer object named server
+
 // Function
 void msgCmd (YunClient client) {
   char command;
@@ -56,8 +55,8 @@ void printDuinoTime() {
     // check the command
     // data command: print the Arduino YUN clock in client browser
     if ( cmd == "data") {
-      Serial.print("Time");
-      Serial.println (boardTime);
+      //Serial.print("Time");
+      //Serial.println (boardTime);
       client.print( "<p> Time " + boardTime + "</p>");
     }
     // msg command: get clock from client browser
@@ -68,3 +67,5 @@ void printDuinoTime() {
   // stop client
   client.stop();
 }
+
+

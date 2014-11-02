@@ -61,6 +61,7 @@ void setup() {
 void loop() {
   
   printDuinoTime();
+  
   delay(1000);
   timeCount++;
 
