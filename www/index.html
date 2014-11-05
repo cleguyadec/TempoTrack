@@ -1,31 +1,62 @@
-<!DOCTYPE html>
-<head>
-<title>YUN Sync Time</title>
-</head>
+<!DOCTYPE HTML>
 <html>
-<font face="arial" size="3" color="#424242">
-<h2> Arduino YUN Synchronization Time </h2>
-<script src="jquery-1.11.1.js"></script>
-<!-- TIME SYNC CLOCK BUTTON -->
-<p>
-<input type="button" onclick="clockMsg()" value="SYNC TIME"/>
-</p>
-<script type="text/javascript"> 
-function clockMsg() {
- var d = new Date();
- var n = d.getTime() / 1000;
- $.get('/arduino/msg/clock/' + n + '/');
- return false;
-}
-</script>
-<!-- GET ARDUINO YUN TIME -->
-<script type="text/javascript">
-function refresh() {
- $('#content').load('/arduino/data/');
-}
-</script>
-<body onload="setInterval(function() {refresh()}, 1000);">
- <span id="content">Waiting...</span>
-</body> 
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>Suivi des températures</title>
+
+		<script type="text/javascript" src="jquery-1.11.1.min.js"></script>
+		<script src="./papaparse.min.js"></script>
+
+		<script>
+		function printTab(data) {
+		    var tbl_body = "";
+		    var odd_even = false;
+		    $.each(data, function() {
+			var tbl_row = "";
+			$.each(this, function(k , v) {
+			    tbl_row += "<td>"+v+"</td>";
+			})
+			tbl_body += "<tr class=\""+( odd_even ? "odd" : "even")+"\">"+tbl_row+"</tr>";
+			odd_even = !odd_even;               
+		    })
+		    $("#contents").html(tbl_body);
+		}
+
+		function parseData(url, callBack) {
+		    Papa.parse(url, {
+			download: true,
+			dynamicTyping: true,
+			complete: function(results) {
+			    callBack(results.data);
+			}
+		    });
+		}
+
+		parseData("http://tempotrack.local/sd/datalog.csv", printTab);  
+		</script>
+
+		<!-- TIME SYNC CLOCK BUTTON -->
+		<script type="text/javascript"> 
+		function clockMsg() {
+			 var d = new Date();
+			 var n = d.getTime() / 1000;
+			 $.get('/arduino/msg/clock/' + n + '/');
+			 return false;
+		}
+		</script>
+
+		<!-- GET ARDUINO YUN TIME -->
+		<script type="text/javascript">
+		function refresh() {
+		 $('#content').load('/arduino/data/');
+		}
+		</script>
+	</head>
+	<body onload="setInterval(function() {refresh()}, 1000);">
+ 	<span id="content">Waiting...</span>
+		<p>
+			<input type="button" onclick="clockMsg()" value="SYNC TIME"/>
+		</p>
+		<table id=contents style="width:50%; height:400px;" border></table>
+	</body>
 </html>
-</font>
