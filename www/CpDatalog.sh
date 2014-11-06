@@ -13,6 +13,7 @@ if [ -d /mnt/sdb1/ ];then
 	echo "USB key find"
 	cp -v /mnt/sda1/datalog.csv /mnt/sdb1/datalog$(date +%j%m%y%H%s).csv
 	>/mnt/sda1/datalog.csv
+	echo "Date;Témpérature;Action">/mnt/sda1/datalog.csv
 	echo "file cleared"
 	exit 0
  else
