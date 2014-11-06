@@ -6,7 +6,115 @@
 
 		<script type="text/javascript" src="jquery-1.11.1.min.js"></script>
 		<script src="./papaparse.min.js"></script>
+		
+		<style type="text/css">
+		body{
+		   width: 100%;
+		}
+		#container {
+		   width: 900px;
+		   margin: 0 auto;
+		}
+		.TableStyle {
+			margin:0px;padding:0px;
+			width:100%;
+			box-shadow: 10px 10px 5px #888888;
+			border:1px solid #9ac6d1;
+	
+			-moz-border-radius-bottomleft:6px;
+			-webkit-border-bottom-left-radius:6px;
+			border-bottom-left-radius:6px;
+	
+			-moz-border-radius-bottomright:6px;
+			-webkit-border-bottom-right-radius:6px;
+			border-bottom-right-radius:6px;
+	
+			-moz-border-radius-topright:6px;
+			-webkit-border-top-right-radius:6px;
+			border-top-right-radius:6px;
+	
+			-moz-border-radius-topleft:6px;
+			-webkit-border-top-left-radius:6px;
+			border-top-left-radius:6px;
+		}.TableStyle table{
+		    border-collapse: collapse;
+			border-spacing: 0;
+			width:100%;
+			height:100%;
+			margin:0px;padding:0px;
+		}.TableStyle tr:last-child td:last-child {
+			-moz-border-radius-bottomright:6px;
+			-webkit-border-bottom-right-radius:6px;
+			border-bottom-right-radius:6px;
+		}
+		.TableStyle table tr:first-child td:first-child {
+			-moz-border-radius-topleft:6px;
+			-webkit-border-top-left-radius:6px;
+			border-top-left-radius:6px;
+		}
+		.TableStyle table tr:first-child td:last-child {
+			-moz-border-radius-topright:6px;
+			-webkit-border-top-right-radius:6px;
+			border-top-right-radius:6px;
+		}.TableStyle tr:last-child td:first-child{
+			-moz-border-radius-bottomleft:6px;
+			-webkit-border-bottom-left-radius:6px;
+			border-bottom-left-radius:6px;
+		}.TableStyle tr:hover td{
+	
+		}
+		.TableStyle tr:nth-child(odd){ background-color:#effffe; }
+		.TableStyle tr:nth-child(even)    { background-color:#ffffff; }.TableStyle td{
+			vertical-align:middle;
+	
+	
+			border:1px solid #9ac6d1;
+			border-width:0px 1px 1px 0px;
+			text-align:center;
+			padding:5px;
+			font-size:10px;
+			font-family:Arial;
+			font-weight:normal;
+			color:#000000;
+		}.TableStyle tr:last-child td{
+			border-width:0px 1px 0px 0px;
+		}.TableStyle tr td:last-child{
+			border-width:0px 0px 1px 0px;
+		}.TableStyle tr:last-child td:last-child{
+			border-width:0px 0px 0px 0px;
+		}
+		.TableStyle tr:first-child td{
+				background:-o-linear-gradient(bottom, #86d8ef 5%, #006a7c 100%);	background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #86d8ef), color-stop(1, #006a7c) );
+			background:-moz-linear-gradient( center top, #86d8ef 5%, #006a7c 100% );
+			filter:progid:DXImageTransform.Microsoft.gradient(startColorstr="#86d8ef", endColorstr="#006a7c");	background: -o-linear-gradient(top,#86d8ef,006a7c);
 
+			background-color:#86d8ef;
+			border:0px solid #9ac6d1;
+			text-align:center;
+			border-width:0px 0px 1px 1px;
+			font-size:14px;
+			font-family:Arial;
+			font-weight:bold;
+			color:#ffffff;
+		}
+		.TableStyle tr:first-child:hover td{
+			background:-o-linear-gradient(bottom, #86d8ef 5%, #006a7c 100%);	background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #86d8ef), color-stop(1, #006a7c) );
+			background:-moz-linear-gradient( center top, #86d8ef 5%, #006a7c 100% );
+			filter:progid:DXImageTransform.Microsoft.gradient(startColorstr="#86d8ef", endColorstr="#006a7c");	background: -o-linear-gradient(top,#86d8ef,006a7c);
+
+			background-color:#86d8ef;
+		}
+		.TableStyle tr:first-child td:first-child{
+			border-width:0px 0px 1px 0px;
+		}
+		.TableStyle tr:first-child td:last-child{
+			border-width:0px 0px 1px 1px;
+		}
+		#alarm {
+			font-weight: bold;
+			color : red;
+		}
+</style>
 		<script>
 		function printTab(data) {
 		    var tbl_body = "";
@@ -14,7 +122,9 @@
 		    $.each(data, function() {
 			var tbl_row = "";
 			$.each(this, function(k , v) {
-			    tbl_row += "<td>"+v+"</td>";
+			if(v >	26 || v < 20){
+			    tbl_row += "<td id=\"alarm\">"+v+"</td>";
+			}else{tbl_row += "<td>"+v+"</td>";}
 			})
 			tbl_body += "<tr class=\""+( odd_even ? "odd" : "even")+"\">"+tbl_row+"</tr>";
 			odd_even = !odd_even;               
@@ -32,7 +142,9 @@
 		    });
 		}
 
-		parseData("http://tempotrack.local/sd/datalog.csv", printTab);  
+		parseData("http://tempotrack.local/sd/datalog.csv", printTab);
+		parseData("http://192.168.1.16/sd/datalog.csv", printTab);
+		parseData("http://192.168.240.1/sd/datalog.csv", printTab);  
 		</script>
 
 		<!-- TIME SYNC CLOCK BUTTON -->
@@ -53,10 +165,12 @@
 		</script>
 	</head>
 	<body onload="setInterval(function() {refresh()}, 1000);">
+	<div id="container">	
  	<span id="content">Waiting...</span>
 		<p>
 			<input type="button" onclick="clockMsg()" value="SYNC TIME"/>
 		</p>
-		<table id=contents style="width:50%; height:400px;" border></table>
+		<table id=contents class="TableStyle" border><tr><td id="alarm">test</td><td>test</td></tr></table>
+	</div>
 	</body>
 </html>
