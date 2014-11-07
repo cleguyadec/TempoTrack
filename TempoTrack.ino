@@ -2,7 +2,7 @@
 /*!
 @file TempoTrack.ino
 @author Le Guyadec Clement
-@license BSD (see license.txt)
+@license CC-BY-NC 
 */
 /**************************************************************************/
 //Include
