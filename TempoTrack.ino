@@ -15,7 +15,7 @@
 #include <YunServer.h>
 #include <YunClient.h>
 #define DHTPIN A1 // what pin we're connected to
-#define DHTTYPE DHT11 // DHT 11 sensor
+#define DHTTYPE DHT22 // DHT 11 sensor
 DHT dht(DHTPIN, DHTTYPE);
 LiquidCrystal lcd(8, 9, 4, 5, 6, 7); // select the pins used on the LCD panel
 /**
@@ -26,9 +26,9 @@ int timeCount = 0;
 alias des boutons du LCD
 **/
 #define btnRIGHT 0
-#define btnUP 1
-#define btnDOWN 2
-#define btnLEFT 3
+//#define btnUP 1
+//#define btnDOWN 2
+//#define btnLEFT 3
 #define btnSELECT 4
 #define btnNONE 5
 /**
@@ -48,7 +48,7 @@ void setup() {
   initYunServer();
   Serial.begin(9600);
   //while(!Serial); //wait for the Serial port to connect.
-  initTemperatureCaptor(21, 26);
+  initTemperatureCaptor(20, 28);
   Serial.println("Hello!");
   // set up the LCD's number of columns and rows:
   lcd.begin(16, 2);
@@ -82,9 +82,7 @@ void loop() {
       float currentTemp = readSensorTemperature();
       //Serial.println(dataLog);
       logTemperature(currentTemp, rfidId);
-      //Serial.print(rfidIdTemp);
-      //Serial.println(boxCount);
-      if (rfidIdTemp != rfidId && rfidId != "") {
+      if (rfidIdTemp != rfidId && rfidId != "" && rfidId.startsWith("BT")) {
         //Serial.println(rfidIdTemp);
         boxCount++;
         rfidIdTemp = rfidId;
@@ -94,7 +92,7 @@ void loop() {
       } else {
         printLcd(getStateMessage(), currentTemp);
         lcd.setCursor(6, 2);
-        lcd.print(rfidIdTemp);
+        lcd.print(rfidId);
         lcd.setCursor(11, 0);
         lcd.print(boxCount);
       }
