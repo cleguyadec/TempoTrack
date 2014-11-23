@@ -1,7 +1,5 @@
 /***********************************************************
  * Arduino YUN Time Synchronization
- * in Acces Mode configuration
- * by using bridge library
  * license: Creative Commons Attribution 4.0
  * author: Physics Light
  * date: 2 July 2014
@@ -30,10 +28,6 @@ void setBoardTime(YunClient client) {
   String time = client.readStringUntil('.');
   time.trim();
   Process setTime;
-  // Linux command line to set time
-  // command date
-  // parameters %s seconds since 1 Jan 1970
-  // -s set command
   // @ time in seconds since 1 Jan 1970
   String cmdTimeStrg = "date +%s -s @" + time;
   setTime.runShellCommand(cmdTimeStrg);
@@ -52,11 +46,8 @@ void printDuinoTime() {
   if (client) {
     String cmd = client.readStringUntil('/');
     cmd.trim(); // eliminate whitespace
-    // check the command
     // data command: print the Arduino YUN clock in client browser
     if ( cmd == "data") {
-      //Serial.print("Time");
-      //Serial.println (boardTime);
       client.print( "<p> Time " + boardTime + "</p>");
     }
     // msg command: get clock from client browser
