@@ -26,11 +26,11 @@ void writeToFile(String dataString) {
     outfile.println(dataString);
     outfile.close();
     // print to the serial port too:
-    Serial.println(dataString);
+    //Serial.println(dataString);
   }
   // if the file isn't open, pop up an error:
   else {
-    Serial.println("error opening");
+    //Serial.println("error opening");
     lcd.clear();
     lcd.setCursor(0, 0);
     lcd.print("error openning");
